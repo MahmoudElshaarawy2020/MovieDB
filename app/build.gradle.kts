@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
+
 }
 
 android {
@@ -11,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.moviedb"
-        minSdk = 31
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,6 +53,16 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
+configurations.all {
+    exclude(group = "xmlpull", module = "xmlpull")
+    exclude(group = "xpp3", module = "xpp3_min")
+}
+
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -68,33 +80,46 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(project(":domain"))
+    implementation(project(":data"))
 
-    // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
 
-    // Room
-    implementation("androidx.room:room-ktx:2.6.0")
-    kapt("androidx.room:room-compiler:2.6.0")
-    implementation("androidx.room:room-paging:2.6.0")
 
-    // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.44")
-    kapt("androidx.hilt:hilt-compiler:1.1.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+    // UI Tooling
+    implementation("androidx.compose.ui:ui-tooling:1.1.1")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    // Coil
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    // Coroutines (Upgraded)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    // Extended Icons
-    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    // OkHttp Logging
+    implementation("com.squareup.okhttp3:logging-interceptor:3.4.1")
 
-    // system UI Controller
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+    // Lifecycle Libraries (Unified Version)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.2")
+
+    // Dagger Hilt
+    implementation("com.google.dagger:hilt-android:2.49")
+    kapt("com.google.dagger:hilt-compiler:2.49")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    // Navigation
+    implementation ("androidx.navigation:navigation-compose:2.8.3")
+
+
+    //Coil
+    implementation(libs.coil.compose)
+
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation ("com.github.bumptech.glide:glide:4.13.0")
+    kapt ("com.github.bumptech.glide:compiler:4.13.0")
+
 }

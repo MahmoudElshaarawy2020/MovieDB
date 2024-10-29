@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MovieDB</string>
+    <string name="OnBoarding">ONBOARDING</string>
+    <string name="title1">Watch everything you want \n for free!</string>
+    <string name="Enter">Enter now</string>
+    <string name="categories">Categories.</string>
 </resources>
