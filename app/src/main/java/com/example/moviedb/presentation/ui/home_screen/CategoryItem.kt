@@ -1,6 +1,7 @@
 package com.example.moviedb.presentation.ui.home_screen
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.example.domain.entity.GenresItem
 
 @Composable
-fun CategoryItem(category: GenresItem){
+fun CategoryItem(category: GenresItem,onClick: () -> Unit ={}){
     Box(
-        modifier = Modifier
+        modifier = Modifier.clickable { onClick() }
             .padding(horizontal = 6.dp)
             .size(width = 116.dp, height = 36.dp)
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(10.dp)),

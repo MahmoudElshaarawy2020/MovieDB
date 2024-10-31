@@ -11,6 +11,8 @@ import com.example.domain.usecase.GetDetails
 import com.example.domain.usecase.GetGenres
 import com.example.domain.usecase.GetMovies
 import com.example.moviedb.util.Resource
+import com.example.moviedb.util.UiState
+import com.example.moviedb.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,9 +30,9 @@ class MoviesViewModel @Inject constructor(
     private val _popular: MutableStateFlow<PopularMoviesResponse?> = MutableStateFlow(null)
     val popular: StateFlow<PopularMoviesResponse?> = _popular
 
-    private val _genres: MutableStateFlow<Resource<GenreResponse>> =
-        MutableStateFlow(Resource.Loading())
-    val genres: StateFlow<Resource<GenreResponse>> get() = _genres
+    private val _genres: MutableStateFlow<UiState<GenreResponse>> =
+        MutableStateFlow(UiState.Loading())
+    val genres: StateFlow<UiState<GenreResponse>> get() = _genres
 
     private val _details: MutableStateFlow<PopularMovies?> = MutableStateFlow(null)
     var details: StateFlow<PopularMovies?> = _details
@@ -49,22 +51,12 @@ class MoviesViewModel @Inject constructor(
     fun getGenres(apiKey: String) {
         viewModelScope.launch {
             try {
-                _genres.value = Resource.Loading()
+                _genres.value = UiState.Loading()
                 val response = genresUseCase(apiKey)
-                _genres.value = Resource.Success(response)
+                _genres.value = UiState.Success(response)
             } catch (e: Exception) {
                 Log.e("GenresViewModel", e.message.toString())
-                _genres.value = Resource.Error(e.message.toString())
-            }
-        }
-    }
-
-    fun getMovieDetails(movieId: Int, apiKey: String) {
-        viewModelScope.launch {
-            try {
-                 moviesDetailsUseCase(apiKey, movieId.toString())
-            } catch (e: Exception) {
-                Log.e("MoviesViewModel", e.message.toString())
+                _genres.value = UiState.Error(UiText.DynamicString(e.message.toString()))
             }
         }
     }

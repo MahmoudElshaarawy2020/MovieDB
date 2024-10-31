@@ -2,9 +2,11 @@ package com.example.moviedb.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.moviedb.presentation.ui.onboarding.OnBoardingScreen
 import com.example.moviedb.presentation.ui.details_screen.DetailsScreen
 import com.example.moviedb.presentation.ui.home_screen.MoviesScreen
@@ -23,14 +25,15 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         }
         composable(Screen.HomeScreen.route) {
             MoviesScreen(onNavigateToDetails = { movieId ->
-                navController.navigate(Screen.DetailsScreen.createRoute(movieId))
-            })
+                navController.navigate(Screen.DetailsScreen.route)
+            }, navController = navController)
         }
-        composable(Screen.DetailsScreen.route) { backStackEntry ->
-            val movieId = backStackEntry.arguments?.getString("movieId")
-            if (movieId != null) {
-                DetailsScreen(movieId = movieId)
-            }
+        composable(
+            route = "DetailsScreen/{movieId}",
+            arguments = listOf(navArgument("movieId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val movieId = backStackEntry.arguments?.getString("movieId")?:""
+            DetailsScreen(movieId = movieId, navHostController = navController)
         }
     }
 }

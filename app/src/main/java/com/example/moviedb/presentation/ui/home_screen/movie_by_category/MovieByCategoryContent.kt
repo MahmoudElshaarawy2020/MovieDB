@@ -9,11 +9,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.moviedb.MoviesViewModel
 import com.example.moviedb.util.API_KEY
 
 @Composable
-fun MovieByCategoryContent(viewModel: MoviesViewModel = hiltViewModel(), genresId: String) {
+fun MovieByCategoryContent(
+    viewModel: MoviesViewModel = hiltViewModel(),
+    genresId: String,
+    navController: NavHostController) {
     val moviesList by viewModel.popular.collectAsState()
     LaunchedEffect(key1 = Unit) {
         viewModel.getMovies(API_KEY, genresId)
@@ -22,7 +27,10 @@ fun MovieByCategoryContent(viewModel: MoviesViewModel = hiltViewModel(), genresI
         modifier = Modifier
             .displayCutoutPadding()
     ){
-        MovieLazyGrid(moviesList = moviesList?.results ?: emptyList())
+        MovieLazyGrid(moviesList = moviesList?.results ?: emptyList(),onClick = {
+            navController.navigate("DetailsScreen/${it}")
+        })
+
 
     }
 

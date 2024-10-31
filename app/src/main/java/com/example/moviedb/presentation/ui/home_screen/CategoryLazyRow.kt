@@ -10,12 +10,19 @@ import androidx.compose.ui.unit.dp
 import com.example.domain.entity.GenresItem
 
 @Composable
-fun CategoryLazyRow(listOfCategories: List<GenresItem>?) {
+fun CategoryLazyRow(
+    listOfCategories: List<GenresItem>?,
+    onClick: (String) -> Unit
+) {
+
     LazyRow(modifier = Modifier.fillMaxWidth()) {
         if (listOfCategories != null) {
             items(listOfCategories) { category ->
                 CategoryItem(
                     category = category,
+                    onClick = {
+                        onClick(category.id.toString())
+                    }
                 )
             }
         }

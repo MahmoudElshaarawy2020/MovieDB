@@ -23,9 +23,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,21 +37,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.moviedb.R
+import com.example.moviedb.util.API_KEY
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun DetailsScreen(movieId: String?) {
+fun DetailsScreen(
+    movieId: String,
+    navHostController: NavHostController,
+    viewModel: MovieDetailsViewModel = hiltViewModel()
+) {
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getMovieDetails(API_KEY, movieId)
+    }
+    val movie by viewModel.movieDetails.collectAsState()
     val gridState = rememberLazyGridState()
-
-    val imageList = listOf(
-        R.drawable.actor1,
-        R.drawable.actor1,
-        R.drawable.actor1,
-        R.drawable.actor1,
-        R.drawable.actor1,
-        R.drawable.actor1
-    )
 
     LazyColumn(
         modifier = Modifier
@@ -64,13 +73,13 @@ fun DetailsScreen(movieId: String?) {
                         elevation = 25.dp,
                     )
             ) {
-                Image(
+                GlideImage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(300.dp),
-                    painter = painterResource(id = R.drawable.movie1),
+                    model = "https://image.tmdb.org/t/p/w500${movie?.posterPath}",
                     contentDescription = null,
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.FillBounds
                 )
             }
 
@@ -84,17 +93,20 @@ fun DetailsScreen(movieId: String?) {
 
 
                 Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = "Morbius",
-                    fontSize = 32.sp,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(0.8f),
+                    text = movie?.title ?: "No name",
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     lineHeight = 52.sp
                 )
-                Spacer(modifier = Modifier.size(width = 140.dp, height = 10.dp))
+                Spacer(modifier = Modifier.size(width = 60.dp, height = 10.dp))
 
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(0.2f)) {
 
 
                     Image(
@@ -106,16 +118,17 @@ fun DetailsScreen(movieId: String?) {
                     )
 
                     Text(
-                        "7.8/10",
+                        text = movie?.voteAverage.toString(),
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp)
+                        fontSize = 16.sp,
+                        color = Color.Black)
                 }
             }
         }
 
         item {
             Text(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.",
+                text = movie?.overview ?: "No overview",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
@@ -135,8 +148,8 @@ fun DetailsScreen(movieId: String?) {
                 verticalArrangement = Arrangement.spacedBy(8.dp), // Space between images vertically
                 horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between images horizontally
             ) {
-                items(imageList) { imageResId ->
-                    ActorsBox(image = imageResId)
+//                items(imageList) { imageResId ->
+//                    ActorsBox(image = imageResId)
                 }
             }
         }
@@ -144,10 +157,3 @@ fun DetailsScreen(movieId: String?) {
 
 
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DetailsScreenPreview() {
-    DetailsScreen(null)
-}
